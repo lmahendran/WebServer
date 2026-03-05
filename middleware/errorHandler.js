@@ -1,9 +1,9 @@
-const { logEvents } = require('./logEvents'); // import the logEvents function from the logEvents module
+const { logEvents } = require('./logEvents');
 
 const errorHandler = (err, req, res, next) => {
-    logEvents(`${err.name}: ${err.message}`, 'errLog.txt'); // log the error to a file called errLog.txt
-    console.error(err.stack);   // log the error stack trace to the console 
-    res.status(500).send(err.message); // send the error message to the client with a 500 status code (internal server error)
+    logEvents(`${err.name}: ${err.message}`, 'errLog.txt');
+    console.error(err.stack)
+    res.status(500).send(err.message);
 }
 
 module.exports = errorHandler;

@@ -6,9 +6,9 @@
 
 # POST {{baseUrl}}/employees
 # content-type: application/json
-#
+
 # {
-#     "firstname": "Logesh",
+#     "firstname": "Vijay",
 #     "lastname": "Mahendran"
 # }
 
@@ -24,7 +24,7 @@
 # content-type: application/json
 
 # {
-#     "id": 4
+#     "id": 2
 # }
 
-GET {{baseUrl}}/employees/1
+# GET {{baseUrl}}/employees/1

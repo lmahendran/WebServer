@@ -3,47 +3,44 @@ const app = express();  // typical naming convention for the express application
 // common core modules - built in modules that come with node
 const path = require('path');
 const cors = require('cors'); // cross origin resource sharing - allows the server to accept requests from different origins (domains) - for example, if the client is hosted on a different domain than the server, the server will reject the request unless CORS is enabled
-const corsOptions = require(path.join(__dirname,'config','corsOptions.js'));
-// const logEvents = require('./middleware/logEvents');
+const corsOptions = require('./config/corsOptions');
 const { logger } = require('./middleware/logEvents'); // import the logger middleware function from the logEvents module
 const errorHandler = require('./middleware/errorHandler'); // import the errorHandler middleware function from the errorHandler module
 const { error } = require('console');
 const PORT = process.env.PORT || 3500;  // local port - the port that the server will listen on
 
+// custom middleware logger
+app.use(logger);
 
-// custom middleware - middleware functions that are created by the developer
-app.use(logger); // use the logger middleware function for all routes - this will log the request method and url to a file called reqLog.txt and to the console for every request that is made to the server
-// cross origin resource sharing - allows the server to accept requests from different origins (domains) - for example, if the client is hosted on a different domain than the server, the server will reject the request unless CORS is enabled
+// Cross Origin Resource Sharing
+app.use(cors(corsOptions));
 
-app.use(cors(corsOptions)); 
+// built-in middleware to handle urlencoded form data
+app.use(express.urlencoded({ extended: false }));
 
-// built in middleware - middleware functions that are included with express
-// waterfall of middleware functions - the order of the middleware functions matters - the first middleware function that matches the request will be executed
-app.use(express.urlencoded({ extended: false }));  // handles url encoded data (form data) - extended: false means that the querystring library is used to parse the data, extended: true means that the qs library is used to parse the data
-app.use(express.json()); // handles json data - parses the json data and makes it available in req.body
-app.use('/', express.static(path.join(__dirname, 'public'))); // serves static files from the public folder - the path.join() method is used to join the __dirname variable (the current directory) with the 'public' string to create the full path to the public folder
-// change the path in htm files to match the new path to the public folder - for example, change <link rel="stylesheet" href="../css/style.css" /> to <link rel="stylesheet" href="css/style.css" />
+// built-in middleware for json 
+app.use(express.json());
 
-// Routes
+//serve static files
+app.use('/', express.static(path.join(__dirname, '/public')));
+
+// routes
 app.use('/', require('./routes/root'));
+app.use('/register', require('./routes/api/register'));
+app.use('/auth', require('./routes/api/auth'));
 app.use('/employees', require('./routes/api/employees'));
 
-// 404 Handler
-app.all(/.*/, (req,res) => {
+app.all(/.*/, (req, res) => {
     res.status(404);
     if (req.accepts('html')) {
-        res.sendFile(path.join(__dirname,'views','404.html'));
-    } else if (res.accepts('json')) {
-        res.json({"error": "404 Not Found"});
+        res.sendFile(path.join(__dirname, 'views', '404.html'));
+    } else if (req.accepts('json')) {
+        res.json({ "error": "404 Not Found" });
     } else {
         res.type('txt').send("404 Not Found");
     }
 });
-// app.get(/.*/, (req, res) => {
-//     res.status(404).sendFile('./views/404.html', { root: __dirname }); // send the 404.html file to the client if the requested page is not found
-// });
 
-app.use(errorHandler); // use the errorHandler middleware function for all routes - this will log the error to a file called errLog.txt and send the error message to the client with a 500 status code (internal server error) if an error occurs in any of the route handlers
+app.use(errorHandler);
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
