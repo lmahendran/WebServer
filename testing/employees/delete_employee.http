@@ -1,0 +1,11 @@
+@baseUrl = http://localhost:3500
+
+@ContentType = application/json
+
+DELETE {{baseUrl}}/employees
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySW5mbyI6eyJ1c2VybmFtZSI6IkxvZ2VzaCIsInJvbGVzIjpbMjAwMSwxOTg0LDUxNTBdfSwiaWF0IjoxNzcyOTEwNTM1LCJleHAiOjE3NzI5MTA1NjV9.A4E5GbU4hTYRTz8XLZkP7AbyZX3e-5uBJRSzgH03Hm8
+
+{
+    "id": 2
+}

@@ -1,33 +1,67 @@
-const express = require('express');
-const app = express();  // typical naming convention for the express application
-// common core modules - built in modules that come with node
-const path = require('path');
-const cors = require('cors'); // cross origin resource sharing - allows the server to accept requests from different origins (domains) - for example, if the client is hosted on a different domain than the server, the server will reject the request unless CORS is enabled
-const corsOptions = require('./config/corsOptions');
-const { logger } = require('./middleware/logEvents'); // import the logger middleware function from the logEvents module
-const errorHandler = require('./middleware/errorHandler'); // import the errorHandler middleware function from the errorHandler module
-const { error } = require('console');
-const PORT = process.env.PORT || 3500;  // local port - the port that the server will listen on
+// MODULES //
 
-// custom middleware logger
+// Common Core modules
+const path = require('path');
+const cors = require('cors');
+
+// NPM Modules
+const express = require('express');
+const cookieParser = require('cookie-parser');
+
+
+// MIDDLEWARE //
+
+const { logger } = require(path.join(__dirname,'middleware','logEvents'));
+const errorHandler = require(path.join(__dirname,'middleware','errorHandler'));
+const verifyJWT = require(path.join(__dirname,'middleware','verifyJWT'));
+const credentials = require(path.join(__dirname,'middleware','credentials'))
+
+
+// SETUP //
+
+// Cors Setup
+const corsOptions = require('./config/corsOptions');
+
+// Initialize app
+const app = express();
+
+// Port setup
+const PORT = process.env.PORT || 3500;
+
+
+// HANDLERS //
+
+// Log Handling
 app.use(logger);
 
-// Cross Origin Resource Sharing
+// Credentials Handling
+app.use(credentials);
+
+// Cross Origin Resource Sharing Handling
 app.use(cors(corsOptions));
 
-// built-in middleware to handle urlencoded form data
+// URL-encoded Form Data Handling
 app.use(express.urlencoded({ extended: false }));
 
-// built-in middleware for json 
+// JSON Handling
 app.use(express.json());
 
-//serve static files
+// Cookies
+app.use(cookieParser());
+
+// Static File Handling
 app.use('/', express.static(path.join(__dirname, '/public')));
 
-// routes
+
+// ROUTES //
+
 app.use('/', require('./routes/root'));
-app.use('/register', require('./routes/api/register'));
-app.use('/auth', require('./routes/api/auth'));
+app.use('/register', require('./routes/register'));
+app.use('/auth', require('./routes/auth'));
+app.use('/refresh', require('./routes/refresh'));
+app.use('/logout', require('./routes/logout'));
+
+app.use(verifyJWT);
 app.use('/employees', require('./routes/api/employees'));
 
 app.all(/.*/, (req, res) => {
@@ -41,6 +75,12 @@ app.all(/.*/, (req, res) => {
     }
 });
 
+
+// ERROR HANDLING //
+
 app.use(errorHandler);
+
+
+// START APP //
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
