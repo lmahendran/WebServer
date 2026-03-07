@@ -1,0 +1,11 @@
+@baseUrl = http://localhost:3500
+
+@ContentType = application/json
+
+POST {{baseUrl}}/employees
+content-type: application/json
+
+{
+    "firstname": "Vijay",
+    "lastname": "Mahendran"
+}

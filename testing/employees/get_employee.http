@@ -3,6 +3,7 @@
 @ContentType = application/json
 
 # GET {{baseUrl}}/employees
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlZpamF5IiwiaWF0IjoxNzcyOTA0NTkxLCJleHAiOjE3NzI5MDQ2MjF9.Qg1_HTSKiTeermgaCuv_IsRxNvdDpSxWnKMhtfrskg4
 
 # POST {{baseUrl}}/employees
 # content-type: application/json
@@ -27,4 +28,5 @@
 #     "id": 2
 # }
 
-# GET {{baseUrl}}/employees/1
+GET {{baseUrl}}/employees/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySW5mbyI6eyJ1c2VybmFtZSI6IlZpamF5Iiwicm9sZXMiOlsyMDAxXX0sImlhdCI6MTc3MjkxMDExMiwiZXhwIjoxNzcyOTEwMTQyfQ.M1xXgtFgMMu-BmAla8ljkx4EVKi_Wbi5s3y3XTWILt4
