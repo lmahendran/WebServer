@@ -1,5 +1,8 @@
 // MODULES //
 
+// Env access
+require('dotenv').config();
+
 // Common Core modules
 const path = require('path');
 const cors = require('cors');
@@ -7,6 +10,7 @@ const cors = require('cors');
 // NPM Modules
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const mongoose = require('mongoose');
 
 
 // MIDDLEWARE //
@@ -19,14 +23,21 @@ const credentials = require(path.join(__dirname,'middleware','credentials'))
 
 // SETUP //
 
+// Mongo setup
+const connectDB = require(path.join(__dirname,'config','dbConn'));
+
 // Cors Setup
-const corsOptions = require('./config/corsOptions');
+const corsOptions = require(path.join(__dirname,'config','corsOptions'));
 
 // Initialize app
 const app = express();
 
 // Port setup
 const PORT = process.env.PORT || 3500;
+
+
+// CONNECT TO MONGODB
+connectDB();
 
 
 // HANDLERS //
@@ -83,4 +94,7 @@ app.use(errorHandler);
 
 // START APP //
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+mongoose.connection.once('open', () => {
+    console.log("Connected to MongoDB.");
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+});
